@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        :root {
+            --apricot: #FFADAD;
+            --neon-magenta: #F652A0;
+            --white: #ffffff;
+            --soft-pink: #fffafa;
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Rounded MT Bold', sans-serif;
+            background-color: var(--soft-pink);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* 1. FULL SCREEN LOGIN OVERLAY */
+        #unlock-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--apricot), var(--neon-magenta));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .login-card {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 400px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--apricot);
+            border-radius: 15px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--neon-magenta);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { transform: scale(1.05); background: #d43d83; }
+
+        /* 2. FULL WIDTH CONTENT SECTIONS */
+        #main-content { display: none; width: 100%; }
+
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 5%; /* Reduced side padding slightly to fit 5 images better */
+            text-align: center;
+        }
+
+        section:nth-child(even) { background-color: #fff0f3; }
+
+        h1, h2 { color: var(--neon-magenta); font-size: 3rem; margin-bottom: 20px; }
+
+        /* COUNTER BOXES */
+        .counter-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .time-box {
+            background: white;
+            border: 3px solid var(--apricot);
+            padding: 20px;
+            border-radius: 20px;
+            min-width: 150px;
+        }
+        .time-box span { display: block; font-size: 3rem; color: var(--neon-magenta); font-weight: bold; }
+
+        /* --- CAKE DESIGN --- */
+        .cake-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .plate {
+            width: 280px;
+            height: 20px;
+            background: #D1D1D1;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            z-index: 1;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .layer {
+            position: absolute;
+            background: #FF7EB3;
+            border-radius: 50% / 20%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .layer-bottom { width: 220px; height: 90px; background: #FF4D94; bottom: 10px; z-index: 2; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1); }
+        .layer-middle { width: 170px; height: 80px; background: #FF70A8; bottom: 65px; z-index: 3; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1); }
+        .layer-top { width: 120px; height: 70px; background: #FF85B2; bottom: 115px; z-index: 4; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1); }
+
+        .frosting {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 35px;
+            background: white;
+            border-radius: 50% 50% 0 0 / 40% 40% 0 0;
+        }
+
+        .frosting::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 0;
+            width: 100%;
+            height: 22px;
+            background-image: radial-gradient(circle, white 10px, transparent 11px);
+            background-size: 24px 35px;
+            background-position: 0 -12px;
+        }
+
+        .candle {
+            width: 10px;
+            height: 45px;
+            background: repeating-linear-gradient(0deg, #fff, #fff 5px, #F652A0 5px, #F652A0 10px);
+            position: absolute;
+            bottom: 165px; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 11;
+            border-radius: 3px;
+        }
+
+        .flame {
+            width: 16px;
+            height: 24px;
+            background: orange;
+            border-radius: 50% 50% 35% 35%;
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px orange;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1); }
+        }
+        .flame.off { display: none; }
+
+        /* --- FIXED 5-IMAGE SYMMETRICAL GALLERY --- */
+        .gallery {
+            display: grid;
+            /* FORCES EXACTLY 5 COLUMNS */
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 15px;
+            width: 100%;
+            max-width: 1400px; /* Prevents images from getting too wide on huge monitors */
+        }
+
+        .photo-slot {
+            background: #eee;
+            height: 450px; /* Your ideal height */
+            border-radius: 20px;
+            background-size: cover;
+            background-position: center;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive: Switches to 2 columns on mobile so images stay visible */
+        @media (max-width: 1000px) {
+            .gallery { grid-template-columns: repeat(2, 1fr); }
+            .photo-slot { height: 350px; }
+        }
+
+        /* LETTER MODAL */
+        #letter-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+        .letter-content {
+            background: #fff9e6;
+            padding: 50px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            position: relative;
+            text-align: left;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        #actual-letter { text-align: justify; text-justify: inter-word; }
+        .close-btn { margin-top: 20px; display: block; margin-left: auto; margin-right: auto; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bdayMusic">
+        <source src="twice-sings-happy-birthday_GlH64vju.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="unlock-screen">
+        <div class="login-card">
+            <h1 style="font-size: 2rem;">🍭 Bungkal Member Access</h1>
+            <p>Hey! Enter your details to start.</p>
+            <input type="text" id="nameInput" placeholder="Your Name">
+            <input type="text" id="dateInput" placeholder="Birthday (YYYY-MM-DD)">
+            <button class="btn" onclick="unlock()">Unlock Surprise</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        
+        <section id="hero">
+            <h1>Happy Birthday, <span id="friendName"></span>! 🥳</h1>
+            <p style="font-size: 1.5rem;">How long you've been horny, fuckable, and mesherep:</p>
+            <div class="counter-container">
+                <div class="time-box"><span id="days">0</span> Days</div>
+                <div class="time-box"><span id="hours">0</span> Hours</div>
+                <div class="time-box"><span id="minutes">0</span> Minutes</div>
+                <div class="time-box"><span id="seconds">0</span> Seconds</div>
+            </div>
+        </section>
+
+        <section>
+            <h2> 🎂 Make a Wish! ✨ </h2>
+            <div class="cake-container">
+                <div class="plate"></div>
+                <div class="layer layer-bottom"></div>
+                <div class="layer layer-middle"></div>
+                <div class="layer layer-top">
+                    <div class="frosting"></div>
+                </div>
+                <div class="candle">
+                    <div class="flame" id="flame"></div>
+                </div>
+            </div>
+            <br><br>
+            <button class="btn" onclick="blow()">😮‍💨 Blowjob the Candle</button>
+        </section>
+
+        <section>
+            <h2>📸 Memories</h2>
+            <div class="gallery">
+                <div class="photo-slot" style="background-image: url('Screenshot 2026-04-03 100745.png');"></div>
+                <div class="photo-slot" style="background-image: url('Screenshot 2026-04-03 100813.png');"></div>
+                <div class="photo-slot" style="background-image: url('Screenshot 2026-04-03 100633.png');"></div>
+                <div class="photo-slot" style="background-image: url('494889023_1435707754221806_1974846244775646870_n.jpg');"></div>
+                <div class="photo-slot" style="background-image: url('received_2535870376743893.jpeg');"></div>
+                <div class="photo-slot" style="background-image: url('orca-image-1084750508.jpeg.jpeg');"></div>
+                <div class="photo-slot" style="background-image: url('Screenshot 2026-04-03 113903.png');"></div>
+                <div class="photo-slot" style="background-image: url('Messenger_creation_00D66514-84DC-4A90-BFED-108D6A1948DD.jpeg');"></div> 
+                <div class="photo-slot" style="background-image: url('623944449_1827300244651610_2020375527348606747_n.jpg');"></div>
+                <div class="photo-slot" style="background-image: url('IMG_20260106_155419_50%_50%.jpg');"></div>
+                <div class="photo-slot" style="background-image: url('received_1155832219642516.jpeg');"></div>
+                <div class="photo-slot" style="background-image: url('661601322_1422658805840641_5862189207695707350_n.jpg');"></div>
+                <div class="photo-slot" style="background-image: url('658917130_1505970731096568_6126023770586708004_n.jpg');"></div>
+                <div class="photo-slot" style="background-image: url('Screenshot 2026-04-03 120351.png');"></div>
+                <div class="photo-slot" style="background-image: url('505544372_691103033798627_2567677418390756369_n.jpg');"></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>✨ Reasons Why You're the Best</h2>
+            <div style="font-size: 1.5rem; text-align: left;">
+                <p>🍭 You always know how to make me and the whole Bungkal crew laugh.</p>
+                <p>🍭 You're the best person to talk about anything with.</p>
+                <p>🍭 You are incredibly supportive (even sa bad decisions hehe).</p>
+                <p>🍭 You always come up with the best inside jokes.</p>
+                <p>🍭 You’re the kind of person people can always count on, especially when it matters most.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>✉️ A Message For You</h2>
+            <button class="btn" onclick="showLetter()">Click to open my letter</button>
+        </section>
+
+        <section>
+            <h1>I Love You, Awesome Nerd! ❤️</h1>
+            <p style="font-size: 1.5rem;">Happy Birthday, Allen Kalbo Kim Domingo-Salon. I hope you stay around for forever, hanggang sa ma-achieve natin lahat ng FANTASY natin sa buhay!</p>
+        </section>
+    </div>
+
+    <div id="letter-overlay">
+        <div class="letter-content">
+            <h2 style="font-size: 2rem; color: var(--neon-magenta);">Dear <span id="displayLetterName"></span>,</h2>
+            <p id="actual-letter">
+                I'm so glad we're friends; you've been such an important part of my life. I'm so grateful for every laugh, every chat, every dirty joke, every kalibugan, and even for all the small fights we've experienced together. 
+                <br><br>
+                I know this year hasn’t been the easiest for you, especially with everything you’ve been trying to understand about yourself. I just want you to remember that you don’t have to have everything figured out right now. There’s no deadline for knowing who you are or who you’re meant to be. Sabi ko nga sa'yo, bata pa tayo and we're still trying to figure things out, kaya i-fuck mo lang kung sinong gusto mong i-fuck.
+                <br><br>
+                What matters the most is that you’re here, you’re trying, and you’re growing along the way, even on the days it doesn’t feel like it. You deserve the world not only today but every day. I hope for you to achieve all of your fantasies and dreams in life. Just know that, as your friend, I'll always be here to support your decisions, may they be good decisions or bad decisions hehe. 
+                <br><br>
+                Stay malibog along the way. May you have the happiest birthday today. I hope this year brings you a little more clarity, a lot more peace of mind, and moments that make you feel like yourself. Thank you, and I love you! Wow Peace ✌️😚🫰
+                <br><br>
+                <span style="display: block; text-align: left;">
+                    Love,<br>
+                    <strong>CEO, Nova Salon</strong>
+                </span>
+            </p>
+            <button class="btn close-btn" onclick="hideLetter()">Close Letter</button>
+        </div>
+    </div>
+
+    <script>
+        function unlock() {
+            const name = document.getElementById('nameInput').value;
+            const bday = document.getElementById('dateInput').value;
+            
+            if(!name || !bday) {
+                alert("Please fill in both fields!");
+                return;
+            }
+
+            // Start playing the music
+            document.getElementById('bdayMusic').play();
+
+            document.getElementById('friendName').innerText = name;
+            document.getElementById('displayLetterName').innerText = name;
+            
+            document.getElementById('unlock-screen').style.transform = 'translateY(-100%)';
+            
+            setTimeout(() => {
+                document.getElementById('unlock-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                startTimer(bday);
+            }, 800);
+        }
+
+        function startTimer(startDateInput) {
+            setInterval(() => {
+                const now = new Date();
+                const utcNow = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const phtNow = new Date(utcNow + (3600000 * 8));
+
+                const birthDate = new Date(startDateInput + "T00:00:00");
+                const diff = phtNow - birthDate;
+
+                document.getElementById('days').innerText = Math.floor(diff / 86400000);
+                document.getElementById('hours').innerText = Math.floor((diff / 3600000) % 24);
+                document.getElementById('minutes').innerText = Math.floor((diff / 60000) % 60);
+                document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60);
+            }, 1000);
+        }
+
+        function blow() {
+            document.getElementById('flame').classList.add('off');
+            alert("Wish Made! 🌟 Stay malibog! Hehe.");
+        }
+
+        function showLetter() { 
+            document.getElementById('letter-overlay').style.display = 'flex'; 
+        }
+
+        function hideLetter() { 
+            document.getElementById('letter-overlay').style.display = 'none'; 
+        }
+    </script>
+
+</body>
+</html>
